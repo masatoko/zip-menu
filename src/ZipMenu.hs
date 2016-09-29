@@ -13,6 +13,8 @@ module ZipMenu
 , modify
 , downTo
 --
+, isTop
+--
 , cursor
 , path
 --
@@ -55,7 +57,7 @@ toMenu = fst . upmost
 
 --
 
-prev :: Show a => ZipMenu a -> Maybe (ZipMenu a)
+prev :: ZipMenu a -> Maybe (ZipMenu a)
 prev (_, []              ) = Nothing
 prev (_, Crumb _ [] _ :bs) = Nothing
 prev (t, Crumb a ls rs:bs) = Just (l, Crumb a ls' (t:rs):bs)
@@ -91,6 +93,11 @@ downTo f (Sub a ts, bs) =
   where
     work i = let (ls, t:rs) = splitAt i ts
              in (t, Crumb a ls rs:bs)
+
+--
+
+isTop :: ZipMenu a -> Bool
+isTop = null . snd
 
 --
 
