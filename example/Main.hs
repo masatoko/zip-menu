@@ -32,21 +32,20 @@ main = do
         putStrLn " [w] : prev"
         putStrLn " [s] : next"
         putStrLn " [a] : up"
-        putStrLn " [d] : down"
+        putStrLn " [d] : down, action"
         putChar '\n'
-        putStrLn " [J] : action"
+        putStrLn " [ ] : top"
         putStrLn "===================="
         putStrLn " "
 
         a <- getChar
         putChar '\n'
         let z' = manipulate a z
-            focusExitYes = case M.path z' of
-                             (Yes:Exit:_) -> True
-                             _            -> False
-            quit = a == 'j' && focusExitYes
+            quit = case M.path z' of
+                     (Yes True:Exit:_) -> True
+                     _                 -> False
         unless quit $
-          loop z'
+          loop $ adjust z'
 
   loop $ fromMaybe z0 $ M.down z0
   where
@@ -58,25 +57,36 @@ main = do
         func = case a of
           'w' -> safe . M.prev
           's' -> safe . M.next
-          'd' -> safe . down'
+          'd' -> fromMaybe (action z) . down'
           'a' -> safe . M.up
           ' ' -> M.upmost
-          'j' -> adjust . action
           _   -> id
 
-    adjust z = case M.cursor z of
-                 No -> fromMaybe z $ M.up z
-                 _  -> z
+    adjust z = unselect $
+      case M.cursor z of
+        No True -> fromMaybe z $ M.up z
+        _       -> z
+
+    unselect = M.zmap work
+      where
+        work (Yes _) = Yes False
+        work (No _)  = No False
+        work t       = t
 
     action = M.modify work
       where
         work (Switch a)  = Switch $ not a
         work (Counter a) = Counter $ a + 1
+        work (Yes _)     = Yes True
+        work (No _)      = No True
         work item        = item
 
     down' z
-      | M.cursor z == Exit = M.downTo (== No) z
+      | M.cursor z == Exit = M.downTo isNo z
       | otherwise          = M.down z
+      where
+        isNo (No _) = True
+        isNo _      = False
 
 data MyItem
   = Root
@@ -90,8 +100,8 @@ data MyItem
   | Credit
   | Exit
   --
-  | Yes
-  | No
+  | Yes Bool
+  | No Bool
   deriving (Show, Eq)
 
 myMenu :: Menu MyItem
@@ -108,8 +118,8 @@ myMenu =
       ]
     , Item Credit
     , Sub Exit
-      [ Item Yes
-      , Item No
+      [ Item (Yes False)
+      , Item (No False)
       ]
     ]
 

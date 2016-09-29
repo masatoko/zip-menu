@@ -11,6 +11,7 @@ module ZipMenu
 , prev
 , next
 , modify
+, zmap
 , downTo
 --
 , isTop
@@ -83,6 +84,9 @@ down (Sub a (t:ts), bs) = Just (t, Crumb a [] ts:bs)
 
 modify :: (a -> a) -> ZipMenu a -> ZipMenu a
 modify f (item, bs) = (modifyTop f item, bs)
+
+zmap :: (a -> a) -> ZipMenu a -> ZipMenu a
+zmap f (item, bs) = (f <$> item, map (f <$>) bs)
 
 --
 
