@@ -8,8 +8,10 @@ module ZipMenu
 , up
 , upmost
 , down
-, prev
-, next
+, left
+, leftMost
+, right
+, rightMost
 , modify
 , zmap
 , downTo
@@ -58,18 +60,24 @@ toMenu = fst . upmost
 
 --
 
-prev :: ZipMenu a -> Maybe (ZipMenu a)
-prev (_, []              ) = Nothing
-prev (_, Crumb _ [] _ :bs) = Nothing
-prev (t, Crumb a ls rs:bs) = Just (l, Crumb a ls' (t:rs):bs)
+left :: ZipMenu a -> Maybe (ZipMenu a)
+left (_, []              ) = Nothing
+left (_, Crumb _ [] _ :bs) = Nothing
+left (t, Crumb a ls rs:bs) = Just (l, Crumb a ls' (t:rs):bs)
   where
     ls' = init ls
     l   = last ls
 
-next :: ZipMenu a -> Maybe (ZipMenu a)
-next (_, []                  ) = Nothing
-next (_, Crumb _ _  []    :bs) = Nothing
-next (t, Crumb a ls (r:rs):bs) = Just (r, Crumb a (ls ++ [t]) rs:bs)
+leftMost :: ZipMenu a -> ZipMenu a
+leftMost z = maybe z leftMost $ left z
+
+right :: ZipMenu a -> Maybe (ZipMenu a)
+right (_, []                  ) = Nothing
+right (_, Crumb _ _  []    :bs) = Nothing
+right (t, Crumb a ls (r:rs):bs) = Just (r, Crumb a (ls ++ [t]) rs:bs)
+
+rightMost :: ZipMenu a -> ZipMenu a
+rightMost z = maybe z rightMost $ right z
 
 up :: ZipMenu a -> Maybe (ZipMenu a)
 up (_, [])               = Nothing

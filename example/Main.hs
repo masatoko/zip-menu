@@ -55,8 +55,8 @@ main = do
       where
         safe = fromMaybe z
         func = case a of
-          'w' -> safe . M.prev
-          's' -> safe . M.next
+          'w' -> fromMaybe (M.rightMost z) . M.left
+          's' -> fromMaybe (M.leftMost z) . M.right
           'd' -> fromMaybe (action z) . down'
           'a' -> safe . M.up
           ' ' -> M.upmost
