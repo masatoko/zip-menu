@@ -20,6 +20,7 @@ module ZipMenu
 --
 , cursor
 , path
+, siblings
 --
 , MenuStatus (..)
 , WithStatus
@@ -124,6 +125,14 @@ path (item, bs0) = fromItem item : fromCrumb bs0
 
     fromCrumb [] = []
     fromCrumb (Crumb a _ _:bs) = a : fromCrumb bs
+
+siblings :: ZipMenu a -> Maybe ([a], a, [a])
+siblings (_, [])              = Nothing
+siblings (t, Crumb _ ls rs:_) = Just (ls', t', rs')
+  where
+    t'  = contentOf t
+    ls' = map contentOf ls
+    rs' = map contentOf rs
 
 -- Helper
 

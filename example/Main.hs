@@ -21,11 +21,14 @@ main = do
         renderTest . M.toMenuWithInfo $ z
 
         putChar '\n'
-        putStrLn "# Cursor"
+        putStrLn "# cursor"
         print $ M.cursor z
         putChar '\n'
-        putStrLn "# Path"
+        putStrLn "# path"
         print $ M.path z
+        putChar '\n'
+        putStrLn "# siblings"
+        print $ M.siblings z
 
         putChar '\n'
         putStrLn "== Move cursor by =="
