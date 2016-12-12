@@ -90,6 +90,7 @@ upmost z = maybe z upmost $ up z
 down :: ZipMenu a -> Maybe (ZipMenu a)
 down (Item _, _)        = Nothing
 down (Sub a (t:ts), bs) = Just (t, Crumb a [] ts:bs)
+down (Sub _ _, _)       = Nothing
 
 modify :: (a -> a) -> ZipMenu a -> ZipMenu a
 modify f (item, bs) = (modifyTop f item, bs)
