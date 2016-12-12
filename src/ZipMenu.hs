@@ -32,9 +32,9 @@ module ZipMenu
 
 import Data.List (splitAt, findIndex)
 
-data Menu a = Item a | Sub a [Menu a] deriving Show
+data Menu a = Item a | Sub a [Menu a] deriving (Eq, Show)
 
-data Crumb a = Crumb a [Menu a] [Menu a] deriving Show
+data Crumb a = Crumb a [Menu a] [Menu a] deriving (Eq, Show)
 
 type ZipMenu a = (Menu a, [Crumb a])
 
